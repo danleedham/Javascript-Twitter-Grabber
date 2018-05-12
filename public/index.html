@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+  <head>
+    <title>Dan Trying to Get Twitter to Werk</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!-- Bootstrap -->
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="style.css" rel="stylesheet" media="screen">
+  </head>
+  <body class="home" ng-controller="myCtrl">
+    <div class="container-fluid">
+      <div class="row" style="margin-top:50px;">
+        <div class="col-lg-8">
+          <input class="form-control" type="text" placeholder="Search string" ng-model="searchText">
+        </div>
+        <div class="col-lg-3">
+          <select class="form-control" ng-model="searchBy">
+            <option value="recent" selected>Recent Tweets</option>
+            <option value="popular">Popular Tweets</option>
+            <option value="mixed">Mixed Tweets</option>
+          </select>
+        </div>
+        <div class="col-lg-1">
+            <p class="text-center"><button class="btn btn-primary" ng-click="getUser(searchText)">Search</button></p>
+        </div>
+      </div>
+      <div class="row" ng-if="twitterErrors" >
+        <div class="col-xs-12">
+          <div class="alert alert-danger">
+            {{twitterErrors}}
+          </div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:25px;" ng-if="results" id="tweetList">
+        <div ng-repeat="result in results.statuses" class="col-xs-12 tweetContent" ng-class-odd="'odd'">
+          <div class="row">
+            <div class="userProfileImage col-xs-1">
+                <img ng-src={{result.user.profile_image_url}}>
+            </div>
+            <div class="user col-xs-2">
+                <div class="userName">
+                  {{result.user.name}}
+                </div>
+                <div class="userHandle">
+                  <a href="https://twitter.com/{{result.user.screen_name}}" target="_blank">@{{result.user.screen_name}} <span class="userVerified" ng-if="result.user.verified">&#10004;</span></a>
+                </div>
+                <div class="tweetDateTime">
+                  {{result.created_at_JSDate | date: 'dd/MM/yy @ h:mma'}}
+                </div>     
+              </div>
+            <div class="text col-xs-8">
+              {{result.full_text}}
+            </div>
+            <div class="saveButtons col-xs-1">
+              <button type="button" ng-click='addToList(result.id_str)' class="btn btn-success">&#43;</button><button ng-click='removeFromList(result.id_str)' type="button" class="btn btn-danger">&#45;</button>
+            </div>
+          </div>
+          <div class="row" ng-if="result.entities.media">
+            <div class="col-xs-3"></div>
+            <div ng-repeat="media in result.entities.media" class="col-xs-8">
+              <img ng-src="{{media.media_url}}" width="{{media.sizes.small.w}}" height="{{media.sizes.small.h}}">
+            </div>
+            <div class="col-xs-1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
